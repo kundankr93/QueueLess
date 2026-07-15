@@ -1,0 +1,37 @@
+.queue-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:25px;
+}
+
+.queue-card{
+    background:white;
+    border-radius:15px;
+    padding:30px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.queue-card h2{
+    margin-bottom:20px;
+}
+
+.queue-card p{
+    margin-bottom:12px;
+    color:#4B5563;
+}
+
+.queue-card button{
+    margin-top:20px;
+    width:100%;
+    padding:14px;
+    border:none;
+    background:#2563EB;
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.queue-card button:hover{
+    background:#1D4ED8;
+}
