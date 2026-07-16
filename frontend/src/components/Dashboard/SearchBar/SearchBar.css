@@ -1,16 +1,18 @@
 .search-bar{
-    margin-bottom:40px;
+    margin-bottom:35px;
 }
 
 .search-bar input{
     width:100%;
-    padding:15px;
-    font-size:17px;
-    border:1px solid #CBD5E1;
-    border-radius:10px;
+    padding:16px 20px;
+    border:none;
     outline:none;
+    border-radius:12px;
+    background:white;
+    font-size:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
-.search-bar input:focus{
-    border-color:#2563EB;
+.search-bar input::placeholder{
+    color:#94a3b8;
 }

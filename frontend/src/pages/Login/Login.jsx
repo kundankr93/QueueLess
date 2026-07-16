@@ -1,22 +1,52 @@
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+import { loginUser } from "../../services/authService";
+import { useAuth } from "../../context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = (e) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Temporary login
-    // Later we'll verify user from backend
+    try {
+      setLoading(true);
 
-    navigate("/dashboard");
+      const data = await loginUser(formData);
+
+      login(data.token, data.user);
+
+navigate("/dashboard", { replace: true });
+    } catch (error) {
+      alert(
+        error.response?.data?.message ||
+        "Login Failed"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="login-page">
 
-      {/* Left Section */}
       <div className="login-left">
 
         <div className="login-box">
@@ -31,7 +61,10 @@ function Login() {
 
             <input
               type="email"
+              name="email"
               placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
               required
             />
 
@@ -39,12 +72,18 @@ function Login() {
 
             <input
               type="password"
+              name="password"
               placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
               required
             />
 
-            <button type="submit">
-              Login
+            <button
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
             </button>
 
           </form>
@@ -61,8 +100,6 @@ function Login() {
         </div>
 
       </div>
-
-      {/* Right Section */}
 
       <div className="login-right">
 

@@ -65,5 +65,8 @@ function Services() {
     </section>
   );
 }
-
+export const getQueueHistory = async () => {
+  const { data } = await API.get("/queue/history");
+  return data;
+};
 export default Services;

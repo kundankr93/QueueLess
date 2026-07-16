@@ -1,137 +1,165 @@
 import "./MyQueue.css";
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import {
+  getMyQueue,
+  leaveQueue,
+} from "../../services/queueService";
 
 function MyQueue() {
-
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // Organization received from Dashboard
-  const organization = location.state;
-  
+  const [queue, setQueue] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // If user directly opens /myqueue without selecting an organization
-  if (!organization) {
+  useEffect(() => {
+    fetchMyQueue();
+  }, []);
+
+  const fetchMyQueue = async () => {
+    try {
+      const data = await getMyQueue();
+
+      if (data.queues && data.queues.length > 0) {
+        setQueue(data.queues[0]);
+      } else {
+        setQueue(null);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLeaveQueue = async () => {
+    const confirmLeave = window.confirm(
+      "Are you sure you want to leave this queue?"
+    );
+
+    if (!confirmLeave) return;
+
+    try {
+      await leaveQueue(queue._id);
+
+      alert("Queue Left Successfully");
+
+      setQueue(null);
+
+      navigate("/dashboard");
+    } catch (error) {
+      alert(
+        error.response?.data?.message ||
+          "Unable to leave queue"
+      );
+    }
+  };
+
+  if (loading) {
     return (
       <div className="myqueue">
-        <div className="token-card">
-          <h2>No Queue Selected</h2>
+        <h2 className="loading">
+          Loading...
+        </h2>
+      </div>
+    );
+  }
+
+  if (!queue) {
+    return (
+      <div className="myqueue">
+        <div className="token-card no-queue">
+          <h2>No Active Queue</h2>
+
           <button
             className="back-btn"
             onClick={() => navigate("/dashboard")}
           >
-            Back to Dashboard
+            Join Queue
           </button>
         </div>
       </div>
     );
   }
 
-  const totalPeople = organization.waiting;
-
-  const [peopleAhead, setPeopleAhead] = useState(totalPeople);
-
-  // 2 minutes per person
-  const waitTime = peopleAhead * 2;
-
-  useEffect(() => {
-
-    const timer = setInterval(() => {
-
-      setPeopleAhead((prev) => {
-
-        if (prev <= 0) {
-          clearInterval(timer);
-          return 0;
-        }
-
-        return prev - 1;
-
-      });
-
-    }, 5000);
-
-    return () => clearInterval(timer);
-
-  }, []);
-
   const progress =
-    ((totalPeople - peopleAhead) / totalPeople) * 100;
+    queue.tokenNumber > 0
+      ? ((queue.tokenNumber - queue.position) /
+          queue.tokenNumber) *
+        100
+      : 0;
 
   return (
-
     <div className="myqueue">
-
       <div className="token-card">
+        <h1>🎉 My Queue</h1>
 
-        <h1>🎉 Queue Joined Successfully</h1>
+        <h2>{queue.organization.name}</h2>
 
-       <h2 style={{ color: "red" }}>
-  {organization.icon} {organization.name}
-</h2>
-
-
+        <p className="location">
+          📍 {queue.organization.address}
+        </p>
 
         <div
-          className={`status ${
-            peopleAhead === 0 ? "served" : "waiting"
-          }`}
+          className={`status ${queue.status.toLowerCase()}`}
         >
-          {peopleAhead === 0
-            ? "🎉 It's Your Turn!"
-            : "⏳ Waiting..."}
+          {queue.status}
         </div>
 
-        <h3>Your Token</h3>
+        <h3 className="token-title">
+          Your Token
+        </h3>
 
         <div className="token">
-          {organization.tokenPrefix}-101
+          #{queue.tokenNumber}
         </div>
 
         <div className="progress-container">
-
           <div
             className="progress-bar"
-            style={{ width: `${progress}%` }}
+            style={{
+              width: `${progress}%`,
+            }}
           ></div>
-
         </div>
 
-        <p>
-          👥 People Ahead :
-          <strong> {peopleAhead}</strong>
-        </p>
+        <div className="queue-info">
+          <p>
+            👥 Position :
+            <strong> {queue.position}</strong>
+          </p>
 
-        <p>
-          ⏱ Estimated Wait :
-          <strong> {waitTime} mins</strong>
-        </p>
+          <p>
+            ⏱ Estimated Wait :
+            <strong>
+              {" "}
+              {queue.estimatedTime} mins
+            </strong>
+          </p>
+        </div>
 
         <div className="button-group">
-
           <button
             className="back-btn"
-            onClick={() => navigate("/dashboard")}
-          >
-            Back to Dashboard
-          </button>
-
-          <button
-            className="track-btn"
             onClick={() =>
-              alert("Live Tracking Coming Soon 🚀")
+              navigate("/dashboard")
             }
           >
-            Track Queue
+            Dashboard
           </button>
 
+          {queue.status === "Waiting" && (
+  <button
+    className="leave-btn"
+    onClick={handleLeaveQueue}
+  >
+    Leave Queue
+  </button>
+)}
         </div>
-
       </div>
-
     </div>
-
   );
 }
 

@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import MyQueue from "./pages/MyQueue/MyQueue";
 
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
@@ -7,14 +6,15 @@ import Register from "./pages/Register/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Queue from "./pages/Queue/Queue";
 import Admin from "./pages/Admin/Admin";
+import MyQueue from "./pages/MyQueue/MyQueue";
+import History from "./pages/History/History";
+import Profile from "./pages/Profile/Profile";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-
   return (
-
     <Routes>
-
-      <Route path="/myqueue" element={<MyQueue />} />
 
       <Route path="/" element={<Home />} />
 
@@ -22,16 +22,60 @@ function App() {
 
       <Route path="/register" element={<Register />} />
 
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/queue" element={<Queue />} />
+      <Route
+        path="/queue"
+        element={
+          <ProtectedRoute>
+            <Queue />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/admin" element={<Admin />} />
+      <Route
+        path="/myqueue"
+        element={
+          <ProtectedRoute>
+            <MyQueue />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+  path="/history"
+  element={
+    <ProtectedRoute>
+      <History />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <Profile />
+    </ProtectedRoute>
+  }
+/>
+
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <Admin />
+          </ProtectedRoute>
+        }
+      />
 
     </Routes>
-
   );
-
 }
 
 export default App;

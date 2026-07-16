@@ -1,26 +1,61 @@
 import "./Sidebar.css";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 function Sidebar() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <div className="sidebar">
 
-      <h2 className="sidebar-logo">
-        QueueLess
-      </h2>
+      <div className="logo">
+        <h1>QueueLess</h1>
+      </div>
 
-      <ul>
+      <nav>
 
-        <li>🏠 Dashboard</li>
+        <NavLink
+          to="/dashboard"
+          className="menu-item"
+        >
+          🏠 Dashboard
+        </NavLink>
 
-        <li>🎟 My Queue</li>
+        <NavLink
+          to="/myqueue"
+          className="menu-item"
+        >
+          🎟 My Queue
+        </NavLink>
 
-        <li>📜 History</li>
+        <NavLink
+          to="/history"
+          className="menu-item"
+        >
+          📜 History
+        </NavLink>
 
-        <li>👤 Profile</li>
+        <NavLink
+          to="/profile"
+          className="menu-item"
+        >
+          👤 Profile
+        </NavLink>
 
-        <li>🚪 Logout</li>
+      </nav>
 
-      </ul>
+      <button
+        className="logout-btn-side"
+        onClick={handleLogout}
+      >
+        🚪 Logout
+      </button>
 
     </div>
   );

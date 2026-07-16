@@ -1,4 +1,5 @@
 import "./Hero.css";
+import heroImage from "../../assets/hero.png";
 
 function Hero() {
   return (
@@ -34,7 +35,12 @@ function Hero() {
 
       <div className="hero-right">
 
-        <img src="/hero.png" alt="Hero"/>
+       <img
+    src={heroImage}
+    alt="QueueLess Hero"
+    className="hero-image"
+    draggable="false"
+/>
 
       </div>
 
